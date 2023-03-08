@@ -9,11 +9,13 @@ threshold = 0.1
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.publish("Status/RaspberryPiA" ,"online", qos=2)
+    client.publish("Status/RaspberryPiA" ,"online", qos=2, retain = True)
+    client.subscribe("lightSensor", qos=2)
+    client.subscribe("threshold", qos=2)
 
 def on_disconnect(client, userdata,  rc):
     print("Disconnected")
-    client.publish("Status/RaspberryPiA" ,"offline", qos=2)
+    client.publish("Status/RaspberryPiA" ,"offline", qos=2, retain = True)
 
 def on_message(client, userdata, msg):
     global prev_poten_value
@@ -48,11 +50,11 @@ while True:
         potentiometer_value = (potentiometer_value - 90) / 160 # potentiometer values output by ADC is in range 90 to 250
 
         if (ldr_value - prev_ldr_value) > threshold or (potentiometer_value - prev_poten_value) > threshold:
-            client.publish("threshold", potentiometer_value, qos=2)
-            client.publish("lightSensor", ldr_value, qos=2)
+            client.publish("threshold", potentiometer_value, qos=2, retain= True)
+            client.publish("lightSensor", ldr_value, qos=2, retain= True)
 
         time.sleep(0.001)
-        
+
     except KeyboardInterrupt:
         GPIO.cleanup()
 
