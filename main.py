@@ -14,7 +14,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("threshold", qos=2)
 
 def on_disconnect(client, userdata,  rc):
-    print("Disconnected")
+    print("Disconnectedwith result code " + str(rc))
     client.publish("Status/RaspberryPiA" ,"offline", qos=2, retain = True)
 
 def on_message(client, userdata, msg):
@@ -25,7 +25,7 @@ def on_message(client, userdata, msg):
     if msg.topic == "lightSensor":
         prev_ldr_value = msg.payload
         
-client = mqtt.Client(client_id="publisher")
+client = mqtt.Client(client_id="Pi-A")
 client.will_set("Status/RaspberryPiA","offline",qos=2, retain = True)
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
